@@ -12,8 +12,8 @@ const seeItems = async (req, res) => {
   try {
     const items = await Item.find({}).lean(true).exec()
     const itemsInBuyersCurrency = items.map(item => {
-      const newItem = { ...item, price: getPrice(item.price, buyerCurrency) };
-      return newItem;
+      const newItem = { ...item, price: getPrice(item.price, buyerCurrency) }
+      return newItem
     })
     res.json(itemsInBuyersCurrency)
   } catch (err) {

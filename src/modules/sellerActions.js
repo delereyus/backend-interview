@@ -2,7 +2,6 @@ const { Item } = require('../models/item')
 
 const putUpForSale = async (req, res) => {
   const { sellerId, description, images, price } = req.body
-  //validate
   try {
     const newItem = await Item.create({ sellerId, description, images, price })
     res.json(newItem)
@@ -14,7 +13,6 @@ const putUpForSale = async (req, res) => {
 
 const changePrice = async (req, res) => {
   const { itemId, newPrice, sellerId } = req.body
-  //validate
   try {
     const itemWithUpdatedPrice = await Item.findOneAndUpdate({ _id: itemId, sellerId }, { price: newPrice }, { new: true })
     if (!itemWithUpdatedPrice) {
