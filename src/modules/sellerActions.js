@@ -2,10 +2,10 @@ const { Item } = require('../models/item')
 
 const putUpForSale = async (req, res) => {
   const { sellerId, description, images, price } = req.body
-
+  //validate
   try {
-    await Item.create({ sellerId, description, images, price })
-    res.status(200).send('Success')
+    const newItem = await Item.create({ sellerId, description, images, price })
+    res.json(newItem)
   } catch (err) {
     console.log(`Failed to put item up for sale with message: ${err.message}`)
     res.status(500).send('Failed to put item up for sale')
@@ -13,10 +13,13 @@ const putUpForSale = async (req, res) => {
 }
 
 const changePrice = async (req, res) => {
-  const { itemId, newPrice } = req.body
-
+  const { itemId, newPrice, sellerId } = req.body
+  //validate
   try {
-    const itemWithUpdatedPrice = await Item.findOneAndUpdate({ _id: itemId }, { price: newPrice }, { new: true })
+    const itemWithUpdatedPrice = await Item.findOneAndUpdate({ _id: itemId, sellerId }, { price: newPrice }, { new: true })
+    if (!itemWithUpdatedPrice) {
+      throw new Error('Unable to find an item with that combination of itemId/sellerId')
+    }
     res.json(itemWithUpdatedPrice)
   } catch (err) {
     console.log(`Failed to update price for itemId ${itemId} with message: ${err.message}`)

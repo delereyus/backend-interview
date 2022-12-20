@@ -1,7 +1,8 @@
 const { Item } = require('../models/item'),
   { Buyer } = require('../models/buyer'),
   { Seller } = require('../models/seller'),
-  { putUpForSale, changePrice } = require('../modules/sellerActions')
+  { putUpForSale, changePrice } = require('../modules/sellerActions'),
+  { seeItems } = require('../modules/buyerActions')
 
 module.exports = (app) => {
   app.get('/items', async (req, res) => {
@@ -14,7 +15,12 @@ module.exports = (app) => {
     res.status(200).send(await Seller.find({}))
   })
 
+
+  // sellerActions
   app.post('/sell', putUpForSale)
 
   app.put('/changeprice', changePrice)
+
+  // buyerActions
+  app.get('/items/:currency', seeItems)
 }

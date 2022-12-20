@@ -5,8 +5,8 @@ const priceSchema = { value: Number, currency: { type: String, enum: CurrencyEnu
 
 const itemSchema = new Schema({
   sellerId: { type: String, required: true },
-  description: String,
-  images: [String],
+  description: { type: String, default: '' },
+  images: { type: [String], default: [] },
   price: { type: priceSchema, required: true },
   potentialBuyerId: String
 })
