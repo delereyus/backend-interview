@@ -1,11 +1,15 @@
 const { Item } = require('../models/item'),
-  { User } = require('../models/user')
+  { Buyer } = require('../models/buyer'),
+  { Seller } = require('../models/seller')
 
 module.exports = (app) => {
-  app.get('/item', async (req, res) => {
+  app.get('/items', async (req, res) => {
     res.status(200).send(await Item.find({}))
   })
-  app.get('/user', async (req, res) => {
-    res.status(200).send(await User.find({}))
+  app.get('/buyers', async (req, res) => {
+    res.status(200).send(await Buyer.find({}))
+  })
+  app.get('/sellers', async (req, res) => {
+    res.status(200).send(await Seller.find({}))
   })
 }

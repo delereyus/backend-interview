@@ -2,7 +2,9 @@ const crypto = require('crypto'),
   { MongoMemoryServer } = require('mongodb-memory-server'),
   mongoose = require('mongoose'),
   { Item } = require('./models/item'),
-  { User, UserTypeEnum } = require('./models/user')
+  { Seller } = require('./models/seller'),
+  { Buyer } = require('./models/buyer'),
+  { CurrencyEnum } = require('./utils/currency')
 
 const DB_NAME = 'DemoDB'
 
@@ -36,16 +38,16 @@ const dropDb = async () => {
 
 const createInitialItems = async () => {
   return Promise.all([
-    Item.create({ description: 'A very nice button-down shirt', images: [`http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`, `http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`] }),
-    Item.create({ description: 'A pair of pants', images: [`http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`, `http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`] }),
-    Item.create({ description: 'This is a dress', images: [`http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`, `http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`] })
+    Item.create({ description: 'A very nice button-down shirt', images: [`http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`, `http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`], sellerId: 'initialSellerId', price: { value: 70, currency: CurrencyEnum.eur } }),
+    Item.create({ description: 'A pair of pants', images: [`http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`, `http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`], sellerId: 'initialSellerId', price: { value: 500, currency: CurrencyEnum.dkk } }),
+    Item.create({ description: 'This is a dress', images: [`http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`, `http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`], sellerId: 'initialSellerId', price: { value: 800, currency: CurrencyEnum.sek } })
   ])
 }
 
 const createInitialUsers = async () => {
   return Promise.all([
-    User.create({ userType: UserTypeEnum.buyer }),
-    User.create({ userType: UserTypeEnum.seller })
+    Seller.create({ userName: 'mrSeller', firstName: 'Seller', lastName: 'Sellerson' }),
+    Buyer.create({ userName: 'mrBuyer', firstName: 'Buyer', lastName: 'Buyerson', currency: CurrencyEnum.sek })
   ])
 }
 

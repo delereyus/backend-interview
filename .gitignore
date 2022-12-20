@@ -107,3 +107,5 @@ dist
 data/*
 !data/placeholder.txt
 
+# .vscode
+.vscode/
