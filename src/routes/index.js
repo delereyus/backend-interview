@@ -2,7 +2,7 @@ const { Item } = require('../models/item'),
   { Buyer } = require('../models/buyer'),
   { Seller } = require('../models/seller'),
   { putUpForSale, changePrice } = require('../modules/sellerActions'),
-  { getItems, reserveItem } = require('../modules/buyerActions')
+  { getItems, reserveItem, getCart } = require('../modules/buyerActions')
 
 module.exports = (app) => {
   app.get('/items', async (req, res) => {
@@ -23,6 +23,7 @@ module.exports = (app) => {
 
   // buyerActions
   app.get('/items/:currency', getItems)
+  app.get('/cart/:buyerId/:currency', getCart)
 
   app.post('/reserve', reserveItem)
 }

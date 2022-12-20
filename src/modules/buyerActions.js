@@ -7,14 +7,21 @@ const getPrice = (price, buyerCurrency) => {
     : convert({ value: price.value, currency: price.currency })(buyerCurrency)
 }
 
+const getItemInBuyersCurrency = (item, buyerCurrency) => {
+  return { ...item, price: getPrice(item.price, buyerCurrency) }
+}
+
+const getItemsInBuyersCurrency = (items, buyerCurrency) => {
+  return items.map(item => {
+    return getItemInBuyersCurrency(item, buyerCurrency)
+  })
+}
+
 const getItems = async (req, res) => {
   const buyerCurrency = req.params.currency
   try {
-    const items = await Item.find({}).lean(true).exec()
-    const itemsInBuyersCurrency = items.map(item => {
-      const newItem = { ...item, price: getPrice(item.price, buyerCurrency) }
-      return newItem
-    })
+    const items = await Item.find({ reservedBy: null }).lean(true).exec()
+    const itemsInBuyersCurrency = getItemsInBuyersCurrency(items, buyerCurrency)
     res.json(itemsInBuyersCurrency)
   } catch (err) {
     console.log(`Failed to fetch items with message: ${err.message}`)
@@ -23,17 +30,36 @@ const getItems = async (req, res) => {
 }
 
 const reserveItem = async (req, res) => {
-  const { itemId, buyerId } = req.body
+  const { itemId, buyerId, currency: buyerCurrency } = req.body
   try {
-    const reservedItem = await Item.findOneAndUpdate({ _id: itemId, potentialBuyerId: null }, { potentialBuyerId: buyerId }, { new: true })
+    const reservedItem = await Item.findOneAndUpdate({ _id: itemId, reservedBy: null }, { reservedBy: buyerId }, { new: true }).lean(true).exec()
     if (!reservedItem) {
       throw new Error('Item could not be found or is already reserved')
     }
-    res.json(reservedItem)
+    const itemInBuyerCurrency = getItemInBuyersCurrency(reservedItem, buyerCurrency)
+    res.json(itemInBuyerCurrency)
   } catch (err) {
     console.log(`Failed to place item ${itemId} into cart for buyer ${buyerId} with message: ${err.message}`)
     res.status(500).send('Failed to place item in cart')
   }
 }
 
-module.exports = { getItems, reserveItem }
+const getCart = async (req, res) => {
+  const { buyerId, currency: buyerCurrency } = req.params
+  try {
+    const itemsInCart = await Item.find({ reservedBy: buyerId }).lean(true).exec()
+    const itemsInBuyersCurrency = getItemsInBuyersCurrency(itemsInCart, buyerCurrency)
+
+    const totalCost = itemsInBuyersCurrency.reduce((total, item) => {
+      total.value += item.price.value
+      return total
+    }, { value: 0, currency: buyerCurrency })
+
+    res.json({ cart: itemsInBuyersCurrency, totalCost })
+  } catch (err) {
+    console.log(`Failed to get cart for buyer ${buyerId} with message: ${err.message}`)
+    res.status(500).send('Failed to get cart')
+  }
+}
+
+module.exports = { getItems, reserveItem, getCart }

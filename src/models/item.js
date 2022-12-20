@@ -12,7 +12,7 @@ const itemSchema = new Schema({
   description: { type: String, default: '' },
   images: { type: [String], default: [] },
   price: { type: priceSchema, required: true },
-  potentialBuyerId: {type: String, default: null}
+  reservedBy: {type: String, default: null}
 })
 
 module.exports = {
