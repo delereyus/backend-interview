@@ -1,7 +1,11 @@
 const { model, Schema } = require('mongoose'),
   { CurrencyEnum } = require('../utils/currency')
 
-const priceSchema = { value: Number, currency: { type: String, enum: CurrencyEnum }, _id: false }
+const priceSchema = {
+  value: { type: Number, required: true },
+  currency: { type: String, enum: CurrencyEnum, required: true },
+  _id: false
+}
 
 const itemSchema = new Schema({
   sellerId: { type: String, required: true },

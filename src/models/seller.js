@@ -2,8 +2,8 @@ const { model, Schema } = require('mongoose')
 
 const sellerSchema = new Schema({
   userName: { type: String, required: true, unique: true },
-  firstName: String,
-  lastName: String
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true }
 })
 
 

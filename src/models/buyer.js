@@ -3,8 +3,8 @@ const { model, Schema } = require('mongoose'),
 
 const buyerSchema = new Schema({
   userName: { type: String, required: true, unique: true },
-  firstName: String,
-  lastName: String,
+  firstName: {type: String, required: true},
+  lastName: {type: String, required: true},
   currency: { type: String, enum: CurrencyEnum, required: true },
   cart: { type: [String], default: [] }
 })
