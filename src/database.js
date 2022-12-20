@@ -1,7 +1,8 @@
-const crypto = require('crypto')
-const { MongoMemoryServer } = require('mongodb-memory-server')
-const mongoose = require('mongoose')
-const { Item } = require('./models')
+const crypto = require('crypto'),
+  { MongoMemoryServer } = require('mongodb-memory-server'),
+  mongoose = require('mongoose'),
+  { Item } = require('./models/item'),
+  { User, UserTypeEnum } = require('./models/user')
 
 const DB_NAME = 'DemoDB'
 
@@ -33,13 +34,25 @@ const dropDb = async () => {
   console.log('Database dropped')
 }
 
+const createInitialItems = async () => {
+  return Promise.all([
+    Item.create({ description: 'A very nice button-down shirt', images: [`http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`, `http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`] }),
+    Item.create({ description: 'A pair of pants', images: [`http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`, `http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`] }),
+    Item.create({ description: 'This is a dress', images: [`http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`, `http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`] })
+  ])
+}
+
+const createInitialUsers = async () => {
+  return Promise.all([
+    User.create({ userType: UserTypeEnum.buyer }),
+    User.create({ userType: UserTypeEnum.seller })
+  ])
+}
+
 const createInitialData = async () => {
   if ((await Item.find({})).length === 0) {
-    await Promise.all([
-      Item.create({ description: 'A very nice button-down shirt', images: [`http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`, `http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`] }),
-      Item.create({ description: 'A pair of pants', images: [`http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`, `http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`] }),
-      Item.create({ description: 'This is a dress', images: [`http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`, `http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`] })
-    ])
+    await createInitialItems()
+    await createInitialUsers()
     console.log('Finished creating initial data')
   }
 }
