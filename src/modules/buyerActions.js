@@ -7,7 +7,7 @@ const getPrice = (price, buyerCurrency) => {
     : convert({ value: price.value, currency: price.currency })(buyerCurrency)
 }
 
-const seeItems = async (req, res) => {
+const getItems = async (req, res) => {
   const buyerCurrency = req.params.currency
   try {
     const items = await Item.find({}).lean(true).exec()
@@ -22,4 +22,18 @@ const seeItems = async (req, res) => {
   }
 }
 
-module.exports = { seeItems }
+const reserveItem = async (req, res) => {
+  const { itemId, buyerId } = req.body
+  try {
+    const reservedItem = await Item.findOneAndUpdate({ _id: itemId, potentialBuyerId: null }, { potentialBuyerId: buyerId }, { new: true })
+    if (!reservedItem) {
+      throw new Error('Item could not be found or is already reserved')
+    }
+    res.json(reservedItem)
+  } catch (err) {
+    console.log(`Failed to place item ${itemId} into cart for buyer ${buyerId} with message: ${err.message}`)
+    res.status(500).send('Failed to place item in cart')
+  }
+}
+
+module.exports = { getItems, reserveItem }

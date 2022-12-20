@@ -2,7 +2,7 @@ const { Item } = require('../models/item'),
   { Buyer } = require('../models/buyer'),
   { Seller } = require('../models/seller'),
   { putUpForSale, changePrice } = require('../modules/sellerActions'),
-  { seeItems } = require('../modules/buyerActions')
+  { getItems, reserveItem } = require('../modules/buyerActions')
 
 module.exports = (app) => {
   app.get('/items', async (req, res) => {
@@ -22,5 +22,7 @@ module.exports = (app) => {
   app.put('/changeprice', changePrice)
 
   // buyerActions
-  app.get('/items/:currency', seeItems)
+  app.get('/items/:currency', getItems)
+
+  app.post('/reserve', reserveItem)
 }
