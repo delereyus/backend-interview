@@ -16,7 +16,7 @@ const changePrice = async (req, res) => {
   try {
     const itemWithUpdatedPrice = await Item.findOneAndUpdate({ _id: itemId, sellerId }, { price: newPrice }, { new: true })
     if (!itemWithUpdatedPrice) {
-      throw new Error('Unable to find an item with that combination of itemId/sellerId')
+      return res.status(404).send('Unable to find an item with that combination of itemId/sellerId')
     }
     res.json(itemWithUpdatedPrice)
   } catch (err) {

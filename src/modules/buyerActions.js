@@ -34,7 +34,7 @@ const reserveItem = async (req, res) => {
   try {
     const reservedItem = await Item.findOneAndUpdate({ _id: itemId, reservedBy: null }, { reservedBy: buyerId }, { new: true }).lean(true).exec()
     if (!reservedItem) {
-      throw new Error('Item could not be found or is already reserved')
+      return res.status(404).send('Item could not be found or is already reserved')
     }
     const itemInBuyerCurrency = getItemInBuyersCurrency(reservedItem, buyerCurrency)
     res.json(itemInBuyerCurrency)
