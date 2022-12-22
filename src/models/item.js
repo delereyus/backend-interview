@@ -16,18 +16,11 @@ const StatusEnum = Object.freeze(
 )
 
 const validateStatus = status => {
-  if (status !== StatusEnum.open && !status.reservedBy && !status.soldTo) {
-    throw new Error('Validation failed for field "status"')
-  }
-}
-
-const statusSetter = status => {
-  validateStatus(status);
-  return status === StatusEnum.open
-    ? StatusEnum.open
-    : status?.reservedBy
-      ? StatusEnum.reserved(status.reservedBy)
-      : StatusEnum.sold(status.soldTo)
+  return !!(
+    status === StatusEnum.open ||
+    (typeof status?.reservedBy === 'string' && status.reservedBy.length) ||
+    (typeof status?.soldTo === 'string' && status.soldTo.length)
+  )
 }
 
 const itemSchema = new Schema({
@@ -35,10 +28,15 @@ const itemSchema = new Schema({
   description: { type: String, default: '' },
   images: { type: [String], default: [] },
   price: { type: priceSchema, required: true },
-  status: { type: any, set: statusSetter, default: StatusEnum.open }
+  status: {
+    type: Schema.Types.Mixed,
+    validate: { validator: validateStatus, message: 'Status must be a valid variant found in "StatusEnum"' },
+    default: StatusEnum.open
+  }
 })
 
 module.exports = {
   Item: model('Item', itemSchema),
-  StatusEnum
+  StatusEnum,
+  validateStatus
 }

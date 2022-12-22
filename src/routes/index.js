@@ -6,7 +6,7 @@ const { Item } = require('../models/item'),
 
 module.exports = (app) => {
   app.get('/items', async (req, res) => {
-    res.status(200).send(await Item.find({}))
+    res.json(await Item.find({}))
   })
   app.get('/buyers', async (req, res) => {
     res.status(200).send(await Buyer.find({}))

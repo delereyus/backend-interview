@@ -32,7 +32,11 @@ const getItems = async (req, res) => {
 const reserveItem = async (req, res) => {
   const { itemId, buyerId, currency: buyerCurrency } = req.body
   try {
-    const reservedItem = await Item.findOneAndUpdate({ _id: itemId, status: StatusEnum.open }, { status: { reservedBy: buyerId } }, { new: true }).lean(true).exec()
+    const reservedItem = await Item.findOneAndUpdate(
+      { _id: itemId, status: StatusEnum.open },
+      { status: StatusEnum.reserved(buyerId) },
+      { new: true, runValidators: true }).lean(true).exec()
+
     if (!reservedItem) {
       return res.status(404).send('Item could not be found or is already reserved')
     }
