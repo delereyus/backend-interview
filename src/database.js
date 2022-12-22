@@ -53,8 +53,7 @@ const createInitialUsers = async () => {
 
 const createInitialData = async () => {
   if ((await Item.find({})).length === 0) {
-    await createInitialItems()
-    await createInitialUsers()
+    await Promise.all([createInitialItems(), createInitialUsers()])
     console.log('Finished creating initial data')
   }
 }
