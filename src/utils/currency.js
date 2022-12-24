@@ -1,3 +1,3 @@
-const CurrencyEnum = Object.freeze({ sek: 'SEK', dkk: 'DKK', eur: 'EUR' })
+const Currencies = Object.freeze({ sek: 'SEK', dkk: 'DKK', eur: 'EUR' })
 
-module.exports = { CurrencyEnum }
+module.exports = { Currencies }

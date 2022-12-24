@@ -5,6 +5,7 @@ const { Item } = require('../models/item'),
   { getItems, reserveItem, getCart } = require('../modules/buyerActions')
 
 module.exports = (app) => {
+  // left these three for easier testing
   app.get('/items', async (req, res) => {
     res.json(await Item.find({}))
   })
