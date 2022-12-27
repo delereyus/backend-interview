@@ -1,3 +1,3 @@
-const { dropDb } = require("./database")
+const { dropDb } = require('./database')
 
 dropDb()

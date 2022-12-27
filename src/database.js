@@ -38,18 +38,60 @@ const dropDb = async () => {
 
 const createInitialItems = async () => {
   return Promise.all([
-    Item.create({ description: 'A very nice button-down shirt', images: [`http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`, `http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`], sellerId: 'initialSellerId', price: { value: 70, currency: Currencies.eur } }),
-    Item.create({ description: 'A pair of pants', images: [`http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`, `http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`], sellerId: 'initialSellerId', price: { value: 500, currency: Currencies.dkk } }),
-    Item.create({ description: 'This is a dress', images: [`http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`, `http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`], sellerId: 'initialSellerId', price: { value: 800, currency: Currencies.sek } })
+    Item.create({
+      description: 'A very nice button-down shirt',
+      images: [
+        `http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`,
+        `http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`
+      ],
+      sellerId: 'initialSellerId',
+      price: { value: 70, currency: Currencies.eur }
+    }),
+    Item.create({
+      description: 'A pair of pants',
+      images: [
+        `http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`,
+        `http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`
+      ],
+      sellerId: 'initialSellerId',
+      price: { value: 500, currency: Currencies.dkk }
+    }),
+    Item.create({
+      description: 'This is a dress',
+      images: [
+        `http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`,
+        `http://example.image-${crypto.randomBytes(4).toString('hex')}.jpg`
+      ],
+      sellerId: 'initialSellerId',
+      price: { value: 800, currency: Currencies.sek }
+    })
   ])
 }
 
 const createInitialUsers = async () => {
   return Promise.all([
-    Seller.create({ userName: 'mrSeller', firstName: 'Seller', lastName: 'Sellerson' }),
-    Seller.create({ userName: 'mrsSeller', firstName: 'Selleri', lastName: 'Sellersdaughter' }),
-    Buyer.create({ userName: 'mrBuyer', firstName: 'Buyer', lastName: 'Buyerson', currency: Currencies.sek }),
-    Buyer.create({ userName: 'mrsBuyer', firstName: 'Buyersk', lastName: 'Buyersdaughter', currency: Currencies.sek })
+    Seller.create({
+      userName: 'mrSeller',
+      firstName: 'Seller',
+      lastName: 'Sellerson'
+    }),
+    Seller.create({
+      userName: 'mrsSeller',
+      firstName: 'Selleri',
+      lastName: 'Sellersdaughter'
+    }),
+    Buyer.create({
+      userName: 'mrBuyer',
+      firstName: 'Buyer',
+      lastName: 'Buyerson',
+      currency: Currencies.sek
+    }),
+    Buyer.create({
+      userName: 'mrsBuyer',
+      firstName: 'Buyersk',
+      lastName: 'Buyersdaughter',
+      currency: Currencies.sek
+    })
   ])
 }
 

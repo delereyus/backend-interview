@@ -12,7 +12,9 @@ describe('correct validation of item status', () => {
   })
   test('Invalid values and currencies are handled for sold and reserved statuses', () => {
     expect(validateStatus(Status.sold('aUser', invalidValue))).toBeFalsy()
-    expect(validateStatus(Status.reserved('anotherUser', invalidCurrency))).toBeFalsy()
+    expect(
+      validateStatus(Status.reserved('anotherUser', invalidCurrency))
+    ).toBeFalsy()
   })
   test('Supported statuses are approved', () => {
     expect(validateStatus(Status.open)).toBeTruthy()

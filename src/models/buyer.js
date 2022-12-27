@@ -8,7 +8,6 @@ const buyerSchema = new Schema({
   currency: { type: String, enum: Object.values(Currencies), required: true }
 })
 
-
 module.exports = {
   Buyer: model('Buyer', buyerSchema)
 }

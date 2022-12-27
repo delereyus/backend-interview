@@ -2,9 +2,14 @@ const { Item } = require('../models/item'),
   { Buyer } = require('../models/buyer'),
   { Seller } = require('../models/seller'),
   { putUpForSale, changePrice } = require('../modules/sellerActions'),
-  { getItems, reserveItem, getCart, finalizeSale } = require('../modules/buyerActions')
+  {
+    getItems,
+    reserveItem,
+    getCart,
+    finalizeSale
+  } = require('../modules/buyerActions')
 
-module.exports = (app) => {
+module.exports = app => {
   // left these three for easier testing
   app.get('/items', async (req, res) => {
     res.json(await Item.find({}))
@@ -15,7 +20,6 @@ module.exports = (app) => {
   app.get('/sellers', async (req, res) => {
     res.status(200).send(await Seller.find({}))
   })
-
 
   // sellerActions
   app.post('/sell', putUpForSale)

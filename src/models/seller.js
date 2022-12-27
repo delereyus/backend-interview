@@ -6,7 +6,6 @@ const sellerSchema = new Schema({
   lastName: { type: String, required: true }
 })
 
-
 module.exports = {
   Seller: model('Seller', sellerSchema)
 }
