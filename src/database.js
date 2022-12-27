@@ -47,7 +47,9 @@ const createInitialItems = async () => {
 const createInitialUsers = async () => {
   return Promise.all([
     Seller.create({ userName: 'mrSeller', firstName: 'Seller', lastName: 'Sellerson' }),
-    Buyer.create({ userName: 'mrBuyer', firstName: 'Buyer', lastName: 'Buyerson', currency: Currencies.sek })
+    Seller.create({ userName: 'mrsSeller', firstName: 'Selleri', lastName: 'Sellersdaughter' }),
+    Buyer.create({ userName: 'mrBuyer', firstName: 'Buyer', lastName: 'Buyerson', currency: Currencies.sek }),
+    Buyer.create({ userName: 'mrsBuyer', firstName: 'Buyersk', lastName: 'Buyersdaughter', currency: Currencies.sek })
   ])
 }
 
