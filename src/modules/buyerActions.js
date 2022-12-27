@@ -70,4 +70,21 @@ const getCart = async (req, res) => {
   }
 }
 
-module.exports = { getItems, reserveItem, getCart }
+const finalizeSale = async (req, res) => {
+  const buyerId = req.body.buyerId
+
+  try {
+    const itemsInCart = await Item.find({ 'status.reserved.userId': buyerId }).lean().exec()
+    const updates = itemsInCart.map(item => {
+      const update = { status: Status.sold(buyerId, item.status.reserved.price) }
+      return { updateOne: { filter: { _id: item._id }, update } }
+    })
+    const result = await Item.bulkWrite(updates, { runValidators: true })
+    res.json(result)
+  } catch (err) {
+    console.log(`Failed to finalize purchase for user ${buyerId} with message: ${err.message}`)
+    res.status(500).send('Failed to finalize purchase')
+  }
+}
+
+module.exports = { getItems, reserveItem, getCart, finalizeSale }

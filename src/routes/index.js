@@ -2,7 +2,7 @@ const { Item } = require('../models/item'),
   { Buyer } = require('../models/buyer'),
   { Seller } = require('../models/seller'),
   { putUpForSale, changePrice } = require('../modules/sellerActions'),
-  { getItems, reserveItem, getCart } = require('../modules/buyerActions')
+  { getItems, reserveItem, getCart, finalizeSale } = require('../modules/buyerActions')
 
 module.exports = (app) => {
   // left these three for easier testing
@@ -19,12 +19,12 @@ module.exports = (app) => {
 
   // sellerActions
   app.post('/sell', putUpForSale)
-
   app.put('/changeprice', changePrice)
 
   // buyerActions
   app.get('/items/:currency', getItems)
   app.get('/cart/:buyerId/:currency', getCart)
 
-  app.post('/reserve', reserveItem)
+  app.put('/reserve', reserveItem)
+  app.put('/finalize', finalizeSale)
 }
