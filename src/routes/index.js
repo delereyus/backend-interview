@@ -1,24 +1,28 @@
 const { Item } = require('../models/item'),
   { Buyer } = require('../models/buyer'),
   { Seller } = require('../models/seller'),
+  { PromoCode } = require('../models/promoCode'),
   { putUpForSale, changePrice } = require('../modules/sellerActions'),
   {
     getItems,
     reserveItem,
     getCart,
-    finalizeSale
+    finalizeSale,
+    applyPromoCode
   } = require('../modules/buyerActions')
 
 module.exports = app => {
-  // left these three for easier testing
   app.get('/items', async (req, res) => {
-    res.json(await Item.find({}))
+    res.send(await Item.find({}))
   })
   app.get('/buyers', async (req, res) => {
-    res.status(200).send(await Buyer.find({}))
+    res.send(await Buyer.find({}))
   })
   app.get('/sellers', async (req, res) => {
-    res.status(200).send(await Seller.find({}))
+    res.send(await Seller.find({}))
+  })
+  app.get('/promos', async (req, res) => {
+    res.send(await PromoCode.find({}))
   })
 
   // sellerActions
@@ -30,5 +34,6 @@ module.exports = app => {
   app.get('/cart/:buyerId/:currency', getCart)
 
   app.put('/reserve', reserveItem)
+  app.put('/promo', applyPromoCode)
   app.put('/finalize', finalizeSale)
 }

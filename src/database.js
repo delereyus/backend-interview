@@ -4,6 +4,7 @@ const crypto = require('crypto'),
   { Item } = require('./models/item'),
   { Seller } = require('./models/seller'),
   { Buyer } = require('./models/buyer'),
+  { PromoCode } = require('./models/promoCode'),
   { Currencies } = require('./utils/currency')
 
 const DB_NAME = 'DemoDB'
@@ -36,7 +37,7 @@ const dropDb = async () => {
   console.log('Database dropped')
 }
 
-const createInitialItems = async () => {
+const createInitialItems = () => {
   return Promise.all([
     Item.create({
       description: 'A very nice button-down shirt',
@@ -68,7 +69,7 @@ const createInitialItems = async () => {
   ])
 }
 
-const createInitialUsers = async () => {
+const createInitialUsers = () => {
   return Promise.all([
     Seller.create({
       userName: 'mrSeller',
@@ -95,9 +96,26 @@ const createInitialUsers = async () => {
   ])
 }
 
+const createInitialPromoCodes = () => {
+  return Promise.all([
+    PromoCode.create({
+      code: '20OFF',
+      discount: { value: 20, currency: Currencies.eur }
+    }),
+    PromoCode.create({
+      code: 'NEWCUSTOMER100',
+      discount: { value: 100, currency: Currencies.sek }
+    })
+  ])
+}
+
 const createInitialData = async () => {
   if ((await Item.find({})).length === 0) {
-    await Promise.all([createInitialItems(), createInitialUsers()])
+    await Promise.all([
+      createInitialItems(),
+      createInitialUsers(),
+      createInitialPromoCodes()
+    ])
     console.log('Finished creating initial data')
   }
 }

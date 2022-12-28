@@ -40,8 +40,6 @@ const priceSchema = new Schema({
   _id: false
 })
 
-const promoCode = { discount: { type: priceSchema } }
-
 const itemSchema = new Schema({
   sellerId: { type: String, required: true },
   description: { type: String, default: '' },
@@ -54,8 +52,7 @@ const itemSchema = new Schema({
       message: 'Status must be a valid variant of "Status"'
     },
     default: Status.open
-  },
-  promoCodes: { type: [promoCode], default: [] }
+  }
 })
 
 itemSchema.index({ status: 1 })
@@ -63,5 +60,6 @@ itemSchema.index({ status: 1 })
 module.exports = {
   Item: model('Item', itemSchema),
   Status,
-  validateStatus
+  validateStatus,
+  priceSchema
 }

@@ -1,16 +1,11 @@
 const { Item, Status } = require('../models/item'),
+  { PromoCode } = require('../models/promoCode'),
+  { Buyer } = require('../models/buyer'),
   { convert } = require('../utils/convert')
 
-const getPrice = (price, buyerCurrency) => {
-  return price.currency === buyerCurrency
-    ? price
-    : convert(price)(buyerCurrency)
-}
-
-const applyPromo = (price, availableCodes, usedCode) => {
-  if (!usedCode) {
-    return price
-  }
+const applyPromo = (promoCode, totalCost) => {
+  const discount = convert(promoCode.discount)(totalCost.currency)
+  return { ...totalCost, value: totalCost.value - discount.value }
 }
 
 const getItems = async (req, res) => {
@@ -19,7 +14,7 @@ const getItems = async (req, res) => {
     const items = await Item.find({ status: Status.open }).lean().exec()
     const itemsInBuyersCurrency = items.map(item => ({
       ...item,
-      price: getPrice(item.price, buyerCurrency)
+      price: convert(item.price)(buyerCurrency)
     }))
 
     res.json(itemsInBuyersCurrency)
@@ -54,7 +49,7 @@ const reserveItem = async (req, res) => {
       {
         status: Status.reserved(
           buyerId,
-          getPrice(itemToReserve.price, buyerCurrency)
+          convert(itemToReserve.price)(buyerCurrency)
         )
       },
       { new: true, runValidators: true }
@@ -105,27 +100,64 @@ const getCart = async (req, res) => {
   }
 }
 
-const finalizeSale = async (req, res) => {
-  const { buyerId, promoCode } = req.body
+const applyPromoCode = async (req, res) => {
+  const { buyerId, promoCode, totalCost } = req.body
 
   try {
-    const itemsInCart = await Item.find({ 'status.reserved.userId': buyerId })
+    const [buyer, promo] = await Promise.all([
+      Buyer.findOne({ _id: buyerId }, { usedPromoCodeIds: 1 }).lean().exec(),
+      PromoCode.findOne({ code: promoCode }).lean().exec()
+    ])
+
+    if (!promo || buyer.usedPromoCodeIds.includes(`${promo._id}`)) {
+      return res.status(404).send('Invalid promo code')
+    }
+
+    const totalCostAfterDiscount = applyPromo(promo, totalCost)
+    res.json({ promo, newPrice: totalCostAfterDiscount })
+  } catch (err) {
+    console.log(
+      `Failed to apply promo code ${promoCode} for buyer ${buyerId} with message: ${err.message}`
+    )
+    res.status(500).send('Failed to apply promo code')
+  }
+}
+
+const finalizeSale = async (req, res) => {
+  const { buyerId, itemIds, totalCost, promoCodeId } = req.body
+
+  try {
+    const itemsInCart = await Item.find({ _id: { $in: itemIds } })
       .lean()
       .exec()
     if (!itemsInCart.length) {
       return res.status(404).send('Cart is empty')
     }
+
     const updates = itemsInCart.map(item => {
-      const priceAfterPromos = applyPromo(
-        item.status.reserved.price,
-        item.promoCodes,
-        promoCode
-      )
-      const update = { status: Status.sold(buyerId, priceAfterPromos) }
-      return { updateOne: { filter: { _id: item._id }, update } }
+      return {
+        updateOne: {
+          filter: { _id: item._id },
+          update: { status: Status.sold(buyerId, item.status.reserved.price) }
+        }
+      }
     })
-    const result = await Item.bulkWrite(updates, { runValidators: true })
-    res.json(result)
+
+    await Promise.all([
+      Item.bulkWrite(updates, { runValidators: true }),
+      Buyer.updateOne(
+        { _id: buyerId },
+        {
+          $push: {
+            purchases: { itemIds, totalCost },
+            usedPromoCodeIds: promoCodeId
+          }
+        }
+      )
+    ])
+
+    const soldItems = await Item.find({ _id: { $in: itemIds } })
+    res.json({ soldItems })
   } catch (err) {
     console.log(
       `Failed to finalize purchase for user ${buyerId} with message: ${err.message}`
@@ -134,4 +166,10 @@ const finalizeSale = async (req, res) => {
   }
 }
 
-module.exports = { getItems, reserveItem, getCart, finalizeSale }
+module.exports = {
+  getItems,
+  reserveItem,
+  getCart,
+  finalizeSale,
+  applyPromoCode
+}
