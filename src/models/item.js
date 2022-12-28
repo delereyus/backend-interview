@@ -10,28 +10,15 @@ const Status = Object.freeze({
 })
 
 const validPrice = price => {
-  return (
-    typeof price.value === 'number' &&
-    Object.values(Currencies).includes(price.currency)
-  )
+  return typeof price.value === 'number' && Object.values(Currencies).includes(price.currency)
 }
 
 const validStatus = status => {
-  return !!(
-    status &&
-    typeof status.userId === 'string' &&
-    status.userId.length &&
-    validPrice(status.price)
-  )
+  return !!(status && typeof status.userId === 'string' && status.userId.length && validPrice(status.price))
 }
 
 const validateStatus = status => {
-  return !!(
-    status &&
-    (status === Status.open ||
-      validStatus(status.reserved) ||
-      validStatus(status.sold))
-  )
+  return !!(status && (status === Status.open || validStatus(status.reserved) || validStatus(status.sold)))
 }
 
 const priceSchema = new Schema({

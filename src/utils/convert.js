@@ -16,8 +16,7 @@ const CONVERSION_RATES = {
 const convert =
   ({ value, currency }) =>
   toCurrency => {
-    if (!value || !currency)
-      throw new Error('value and currency is required for conversion')
+    if (!value || !currency) throw new Error('value and currency is required for conversion')
     if (currency === toCurrency) {
       return { value, currency }
     }

@@ -38,19 +38,14 @@ const reserveItem = async (req, res) => {
       .lean()
       .exec()
     if (reservedItemsWithDifferentCurrency.length) {
-      return res
-        .status(400)
-        .send('All items in a cart must be in the same currency')
+      return res.status(400).send('All items in a cart must be in the same currency')
     }
 
     const itemToReserve = await Item.findOne({ _id: itemId }).lean().exec()
     const reservedItem = await Item.findOneAndUpdate(
       { _id: itemId, status: Status.open },
       {
-        status: Status.reserved(
-          buyerId,
-          convert(itemToReserve.price)(buyerCurrency)
-        )
+        status: Status.reserved(buyerId, convert(itemToReserve.price)(buyerCurrency))
       },
       { new: true, runValidators: true }
     )
@@ -58,16 +53,12 @@ const reserveItem = async (req, res) => {
       .exec()
 
     if (!reservedItem) {
-      return res
-        .status(404)
-        .send('Item could not be found or is already reserved')
+      return res.status(404).send('Item could not be found or is already reserved')
     }
 
     res.json(reservedItem)
   } catch (err) {
-    console.log(
-      `Failed to place item ${itemId} into cart for buyer ${buyerId} with message: ${err.message}`
-    )
+    console.log(`Failed to place item ${itemId} into cart for buyer ${buyerId} with message: ${err.message}`)
     res.status(500).send('Failed to place item in cart')
   }
 }
@@ -75,9 +66,7 @@ const reserveItem = async (req, res) => {
 const getCart = async (req, res) => {
   const { buyerId, currency: buyerCurrency } = req.params
   try {
-    const itemsInCart = await Item.find({ 'status.reserved.userId': buyerId })
-      .lean()
-      .exec()
+    const itemsInCart = await Item.find({ 'status.reserved.userId': buyerId }).lean().exec()
 
     const totalCost = itemsInCart.reduce(
       (total, item) => {
@@ -86,16 +75,13 @@ const getCart = async (req, res) => {
       },
       {
         value: 0,
-        currency:
-          itemsInCart[0]?.status.reserved.price.currency || buyerCurrency
+        currency: itemsInCart[0]?.status.reserved.price.currency || buyerCurrency
       }
     )
 
     res.json({ cart: itemsInCart, totalCost })
   } catch (err) {
-    console.log(
-      `Failed to get cart for buyer ${buyerId} with message: ${err.message}`
-    )
+    console.log(`Failed to get cart for buyer ${buyerId} with message: ${err.message}`)
     res.status(500).send('Failed to get cart')
   }
 }
@@ -116,9 +102,7 @@ const applyPromoCode = async (req, res) => {
     const totalCostAfterDiscount = applyPromo(promo, totalCost)
     res.json({ promo, newPrice: totalCostAfterDiscount })
   } catch (err) {
-    console.log(
-      `Failed to apply promo code ${promoCode} for buyer ${buyerId} with message: ${err.message}`
-    )
+    console.log(`Failed to apply promo code ${promoCode} for buyer ${buyerId} with message: ${err.message}`)
     res.status(500).send('Failed to apply promo code')
   }
 }
@@ -159,9 +143,7 @@ const finalizeSale = async (req, res) => {
     const soldItems = await Item.find({ _id: { $in: itemIds } })
     res.json({ soldItems })
   } catch (err) {
-    console.log(
-      `Failed to finalize purchase for user ${buyerId} with message: ${err.message}`
-    )
+    console.log(`Failed to finalize purchase for user ${buyerId} with message: ${err.message}`)
     res.status(500).send('Failed to finalize purchase')
   }
 }

@@ -3,13 +3,7 @@ const { Item } = require('../models/item'),
   { Seller } = require('../models/seller'),
   { PromoCode } = require('../models/promoCode'),
   { putUpForSale, changePrice } = require('../modules/sellerActions'),
-  {
-    getItems,
-    reserveItem,
-    getCart,
-    finalizeSale,
-    applyPromoCode
-  } = require('../modules/buyerActions')
+  { getItems, reserveItem, getCart, finalizeSale, applyPromoCode } = require('../modules/buyerActions')
 
 module.exports = app => {
   app.get('/items', async (req, res) => {

@@ -111,11 +111,7 @@ const createInitialPromoCodes = () => {
 
 const createInitialData = async () => {
   if ((await Item.find({})).length === 0) {
-    await Promise.all([
-      createInitialItems(),
-      createInitialUsers(),
-      createInitialPromoCodes()
-    ])
+    await Promise.all([createInitialItems(), createInitialUsers(), createInitialPromoCodes()])
     console.log('Finished creating initial data')
   }
 }
