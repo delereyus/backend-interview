@@ -44,9 +44,7 @@ const reserveItem = async (req, res) => {
     const itemToReserve = await Item.findOne({ _id: itemId }).lean().exec()
     const reservedItem = await Item.findOneAndUpdate(
       { _id: itemId, status: Status.open },
-      {
-        status: Status.reserved(buyerId, convert(itemToReserve.price)(buyerCurrency))
-      },
+      { status: Status.reserved(buyerId, convert(itemToReserve.price)(buyerCurrency)) },
       { new: true, runValidators: true }
     )
       .lean()
@@ -73,10 +71,7 @@ const getCart = async (req, res) => {
         total.value += item.status.reserved.price.value
         return total
       },
-      {
-        value: 0,
-        currency: itemsInCart[0]?.status.reserved.price.currency || buyerCurrency
-      }
+      { value: 0, currency: itemsInCart[0]?.status.reserved.price.currency || buyerCurrency }
     )
 
     res.json({ cart: itemsInCart, totalCost })

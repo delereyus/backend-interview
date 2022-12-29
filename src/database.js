@@ -71,41 +71,17 @@ const createInitialItems = () => {
 
 const createInitialUsers = () => {
   return Promise.all([
-    Seller.create({
-      userName: 'mrSeller',
-      firstName: 'Seller',
-      lastName: 'Sellerson'
-    }),
-    Seller.create({
-      userName: 'mrsSeller',
-      firstName: 'Selleri',
-      lastName: 'Sellersdaughter'
-    }),
-    Buyer.create({
-      userName: 'mrBuyer',
-      firstName: 'Buyer',
-      lastName: 'Buyerson',
-      currency: Currencies.sek
-    }),
-    Buyer.create({
-      userName: 'mrsBuyer',
-      firstName: 'Buyersk',
-      lastName: 'Buyersdaughter',
-      currency: Currencies.sek
-    })
+    Seller.create({ userName: 'mrSeller', firstName: 'Seller', lastName: 'Sellerson' }),
+    Seller.create({ userName: 'mrsSeller', firstName: 'Selleri', lastName: 'Sellersdaughter' }),
+    Buyer.create({ userName: 'mrBuyer', firstName: 'Buyer', lastName: 'Buyerson', currency: Currencies.sek }),
+    Buyer.create({ userName: 'mrsBuyer', firstName: 'Buyersk', lastName: 'Buyersdaughter', currency: Currencies.sek })
   ])
 }
 
 const createInitialPromoCodes = () => {
   return Promise.all([
-    PromoCode.create({
-      code: '20OFF',
-      discount: { value: 20, currency: Currencies.eur }
-    }),
-    PromoCode.create({
-      code: 'NEWCUSTOMER100',
-      discount: { value: 100, currency: Currencies.sek }
-    })
+    PromoCode.create({ code: '20OFF', discount: { value: 20, currency: Currencies.eur } }),
+    PromoCode.create({ code: 'NEWCUSTOMER100', discount: { value: 100, currency: Currencies.sek } })
   ])
 }
 
