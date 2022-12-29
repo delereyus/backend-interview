@@ -122,15 +122,19 @@ const finalizeSale = async (req, res) => {
       }
     })
 
+    const pushes = {
+      purchases: { itemIds, totalCost }
+    }
+    if (promoCodeId) {
+      pushes.usedPromoCodeIds = promoCodeId
+    }
+
     await Promise.all([
       Item.bulkWrite(updates, { runValidators: true }),
       Buyer.updateOne(
         { _id: buyerId },
         {
-          $push: {
-            purchases: { itemIds, totalCost },
-            usedPromoCodeIds: promoCodeId
-          }
+          $push: pushes
         }
       )
     ])
